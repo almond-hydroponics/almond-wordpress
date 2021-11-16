@@ -1,0 +1,44 @@
+version: '3'
+services:
+  wordpress_db:
+    image: mysql:8.0.27
+    container_name: wordpress_db
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - almond_almond-network
+
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - wordpress_db
+    image: wordpress:latest
+#    ports:
+#      - "8000:80"
+    expose:
+      - 80
+    restart: always
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      WORDPRESS_DB_HOST: wordpress_db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - almond_almond-network
+
+volumes:
+  wordpress:
+  db_data:
+
+networks:
+  almond_almond-network:
+    external: true
